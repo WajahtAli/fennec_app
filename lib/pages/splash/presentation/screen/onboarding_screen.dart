@@ -122,35 +122,24 @@ class _OnBoardingScreenState extends State<OnBoardingScreen>
             children: [
               Hero(
                 tag: 'splash_logo',
-                child: AnimatedBuilder(
-                  animation: _logoController,
-                  builder: (context, child) {
-                    return FadeTransition(
-                      opacity: _logoFadeAnimation,
-                      child: ScaleTransition(
-                        scale: _logoScaleAnimation,
-                        child: Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            Lottie.asset(
-                              Assets.animations.welcomeScreenAnimationNoShadow,
-                              repeat: true,
-                              fit: BoxFit.fill,
-                            ),
-                            SvgPicture.asset(
-                              Assets.icons.fennecLogoWithText.path,
-                              width: 120,
-                              height: 120,
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Lottie.asset(
+                      Assets.animations.welcomeScreenAnimationNoShadow,
+                      repeat: true,
+                      fit: BoxFit.fill,
+                    ),
+                    SvgPicture.asset(
+                      Assets.icons.fennecLogoWithText.path,
+                      width: 140,
+                      height: 140,
+                    ),
+                  ],
                 ),
               ),
 
-              const SizedBox(height: 24),
+              const SizedBox(height: 100),
 
               // Animated Text
               AnimatedBuilder(
@@ -164,7 +153,7 @@ class _OnBoardingScreenState extends State<OnBoardingScreen>
                         text: 'Find your vibe\n-together.',
                         style: AppTextStyles.h1(
                           context,
-                        ).copyWith(color: Colors.white, fontSize: 28),
+                        ).copyWith(color: Colors.white, fontSize: 40),
                       ),
                     ),
                   );
@@ -172,34 +161,21 @@ class _OnBoardingScreenState extends State<OnBoardingScreen>
               ),
 
               const SizedBox(height: 40),
-
-              AnimatedBuilder(
-                animation: _buttonController,
-                builder: (context, child) {
-                  return FadeTransition(
-                    opacity: _buttonFadeAnimation,
-                    child: SlideTransition(
-                      position: _buttonSlideAnimation,
-                      child: CustomElevatedButton(
-                        width: 0.9.sw,
-                        text: 'Get Started',
-                        onTap: () {
-                          AutoRouter.of(
-                            context,
-                          ).replace(const DashboardRoute());
-                        },
-                        icon: Assets.icons.arrowRight.svg(
-                          width: 24,
-                          height: 24,
-                          color: ColorPalette.white,
-                        ),
-                      ),
-                    ),
-                  );
-                },
-              ),
             ],
           ),
+        ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: CustomElevatedButton(
+        width: 0.9.sw,
+        text: 'Get Started',
+        onTap: () {
+          AutoRouter.of(context).replace(const DashboardRoute());
+        },
+        icon: Assets.icons.arrowRight.svg(
+          width: 24,
+          height: 24,
+          color: ColorPalette.white,
         ),
       ),
     );

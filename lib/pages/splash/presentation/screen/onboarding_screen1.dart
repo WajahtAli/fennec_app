@@ -122,7 +122,7 @@ class _OnBoardingScreen1State extends State<OnBoardingScreen1>
   }
 
   void _skipToEnd() {
-    AutoRouter.of(context).replace(const DashboardRoute());
+    AutoRouter.of(context).replace(const CreateAccountRoute());
   }
 
   @override
@@ -164,7 +164,7 @@ class _OnBoardingScreen1State extends State<OnBoardingScreen1>
                   return Padding(
                     padding: EdgeInsets.symmetric(
                       horizontal: 24.w,
-                      vertical: 40.h,
+                      vertical: 50.h,
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -231,56 +231,47 @@ class _OnBoardingScreen1State extends State<OnBoardingScreen1>
   }
 
   Widget _buildPage2() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
+    return Stack(
       children: [
-        // Stack to overlay animations
-        LayoutBuilder(
-          builder: (context, constraints) {
-            return SizedBox(
-              height: getHeight(context) * 0.6,
-              child: Stack(
-                alignment: Alignment.center,
+        Positioned.fill(
+          child: Align(
+            alignment: Alignment.bottomCenter,
+            child: Lottie.asset(Assets.animations.emojis7s, fit: BoxFit.cover),
+          ),
+        ),
+
+        Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Spacer(flex: 50),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 40),
+              child: Column(
                 children: [
-                  Positioned.fill(
-                    child: Lottie.asset(
-                      Assets.animations.emojis6s,
-                      fit: BoxFit.contain,
-                    ),
+                  Lottie.asset(
+                    Assets.animations.scrollingMessagesTopOpacity,
+                    fit: BoxFit.contain,
                   ),
-                  Positioned.fill(
-                    child: Lottie.asset(
-                      Assets.animations.scrollingMessagesTopOpacity,
-                      fit: BoxFit.contain,
-                    ),
+                  AppText(
+                    text: 'Group Chats that\nStay Alive',
+                    textAlign: TextAlign.center,
+                    style: AppTextStyles.h1(
+                      context,
+                    ).copyWith(color: Colors.white, fontSize: 32),
+                  ),
+                  const SizedBox(height: 24),
+                  AppText(
+                    text:
+                        'Dive into a shared chat room, Have fun with your friends',
+                    textAlign: TextAlign.center,
+                    style: AppTextStyles.bodyLarge(
+                      context,
+                    ).copyWith(color: Colors.white, fontSize: 16),
                   ),
                 ],
               ),
-            );
-          },
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 40),
-          child: Column(
-            children: [
-              AppText(
-                text: 'Group Chats that\nStay Alive',
-                textAlign: TextAlign.center,
-                style: AppTextStyles.h1(
-                  context,
-                ).copyWith(color: Colors.white, fontSize: 32),
-              ),
-              const SizedBox(height: 24),
-              AppText(
-                text:
-                    'Dive into a shared chat room, Have fun with your friends',
-                textAlign: TextAlign.center,
-                style: AppTextStyles.bodyLarge(
-                  context,
-                ).copyWith(color: Colors.white, fontSize: 16),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ],
     );

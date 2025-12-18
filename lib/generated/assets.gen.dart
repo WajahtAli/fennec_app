@@ -30,6 +30,9 @@ class $AssetsAnimationsGen {
   String get fennecLogoAnimation =>
       'assets/animations/Fennec-Logo-Animation.json';
 
+  /// File path: assets/animations/Icon_bg.json
+  String get iconBg => 'assets/animations/Icon_bg.json';
+
   /// File path: assets/animations/Rotating-Group-Animation (1).json
   String get rotatingGroupAnimation1 =>
       'assets/animations/Rotating-Group-Animation (1).json';
@@ -70,6 +73,7 @@ class $AssetsAnimationsGen {
     emojis6s,
     emojis7s,
     fennecLogoAnimation,
+    iconBg,
     rotatingGroupAnimation1,
     rotatingGroupAnimationNoShadow,
     rotatingGroupAnimation,

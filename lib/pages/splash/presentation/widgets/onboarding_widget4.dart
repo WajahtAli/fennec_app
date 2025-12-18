@@ -17,92 +17,134 @@ class OnBoardingWidget4 extends StatelessWidget {
             Expanded(
               child: Stack(
                 children: [
-                  // Top left emoji (eyes)
-                  _buildFloatingEmoji(
-                    Assets.icons.eyeEmoji.path,
+                  // Top icons row
+                  Positioned(
                     top: 40,
-                    left: 40,
-                    delay: 0,
+                    left: 0,
+                    right: 0,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        _AnimatedFloatingIcon(
+                          assetPath: Assets.icons.eyeEmoji.path,
+                          delay: 0,
+                          color: Colors.white,
+                        ),
+                        SizedBox(width: 80),
+                        _AnimatedFloatingIcon(
+                          assetPath: Assets.icons.handshake.path,
+                          delay: 150,
+                          color: Colors.white,
+                        ),
+                      ],
+                    ),
                   ),
-                  // Top right emoji (handshake)
-                  _buildFloatingEmoji(
-                    Assets.icons.handshake.path,
-                    top: 60,
-                    right: 60,
-                    delay: 300,
+
+                  // Bottom icons row
+                  Positioned(
+                    bottom: 520,
+                    left: 0,
+                    right: 0,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 30),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          _AnimatedFloatingIcon(
+                            assetPath: Assets.icons.verifiedBadge.path,
+                            delay: 300,
+                            color: ColorPalette.green,
+                          ),
+                          _AnimatedFloatingIcon(
+                            assetPath: Assets.icons.people.path,
+                            delay: 450,
+                            color: Colors.white,
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
-                  // Bottom left emoji (checkmark badge)
-                  _buildFloatingEmoji(
-                    Assets.icons.verifiedBadge.path,
-                    bottom: 480,
-                    left: 30,
-                    delay: 600,
-                  ),
-                  // Bottom right emoji (group)
-                  _buildFloatingEmoji(
-                    Assets.icons.people.path,
-                    bottom: 480,
-                    right: 40,
-                    delay: 900,
-                  ),
+
+                  // Center mobile image
                   Center(
                     child: Padding(
-                      padding: const EdgeInsets.only(top: 160),
+                      padding: const EdgeInsets.only(top: 180),
                       child: Image.asset(
                         Assets.images.mobile.path,
                         fit: BoxFit.cover,
                       ),
                     ),
                   ),
+
+                  // Bottom text with blur
                   Align(
                     alignment: Alignment.bottomCenter,
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(32),
-                        topRight: Radius.circular(32),
-                      ),
-                      child: BackdropFilter(
-                        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 40,
-                            horizontal: 24,
+                    child: SizedBox(
+                      height: 240,
+                      width: double.infinity,
+                      child: Stack(
+                        children: [
+                          LayoutBuilder(
+                            builder: (context, constraints) {
+                              int steps = 60; // more steps → smoother
+                              return Stack(
+                                children: List.generate(steps, (index) {
+                                  double fraction = index / (steps - 1);
+                                  double sigmaY =
+                                      1 + fraction * 30; // sigmaY from 1 → 10
+                                  double sigmaX =
+                                      0.5 + fraction * 1; // sigmaX small
+                                  return Positioned(
+                                    top: constraints.maxHeight * fraction,
+                                    left: 0,
+                                    right: 0,
+                                    height: constraints.maxHeight / steps,
+                                    child: ClipRect(
+                                      child: BackdropFilter(
+                                        filter: ImageFilter.blur(
+                                          sigmaX: sigmaX,
+                                          sigmaY: sigmaY,
+                                        ),
+                                        child: Container(
+                                          color: Colors.transparent,
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                }),
+                              );
+                            },
                           ),
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                              colors: [
-                                Colors.white.withOpacity(0.01),
-                                Colors.black.withOpacity(0.005),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 20,
+                              horizontal: 24,
+                            ),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Spacer(),
+                                Text(
+                                  'Your Group,\nYour Rules',
+                                  textAlign: TextAlign.center,
+                                  style: AppTextStyles.h1(
+                                    context,
+                                  ).copyWith(color: Colors.white, fontSize: 32),
+                                ),
+                                const SizedBox(height: 16),
+                                Text(
+                                  'Customize your groups\' profile to match your energy',
+                                  textAlign: TextAlign.center,
+                                  style: AppTextStyles.bodyLarge(
+                                    context,
+                                  ).copyWith(color: Colors.white, fontSize: 16),
+                                ),
+                                SizedBox(height: 40),
+                                Spacer(),
                               ],
                             ),
                           ),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                'Your Group,\nYour Rules',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 36,
-                                  fontWeight: FontWeight.bold,
-                                  height: 1.2,
-                                  letterSpacing: -0.5,
-                                ),
-                              ),
-                              const SizedBox(height: 16),
-                              Text(
-                                'Customize your groups\' profile to match your energy',
-                                textAlign: TextAlign.center,
-                                style: AppTextStyles.bodyLarge(
-                                  context,
-                                ).copyWith(color: Colors.white),
-                              ),
-                            ],
-                          ),
-                        ),
+                        ],
                       ),
                     ),
                   ),
@@ -114,42 +156,19 @@ class OnBoardingWidget4 extends StatelessWidget {
       ],
     );
   }
-
-  Widget _buildFloatingEmoji(
-    String assetPath, {
-    double? top,
-    double? bottom,
-    double? left,
-    double? right,
-    int delay = 0,
-  }) {
-    return Positioned(
-      top: top,
-      bottom: bottom,
-      left: left,
-      right: right,
-      child: TweenAnimationBuilder<double>(
-        tween: Tween(begin: 0.0, end: 1.0),
-        duration: Duration(milliseconds: 800),
-        curve: Curves.easeOutBack,
-        builder: (context, value, child) {
-          return Transform.scale(
-            scale: 0.6 + (value * 0.4),
-            child: Opacity(opacity: value.clamp(0.0, 1.0), child: child),
-          );
-        },
-        child: _AnimatedFloatingIcon(assetPath: assetPath, delay: delay),
-      ),
-    );
-  }
 }
 
-// Animated floating icon widget with continuous animation
+// Animated floating icon widget with smooth pop animation every 2 seconds
 class _AnimatedFloatingIcon extends StatefulWidget {
   final String assetPath;
   final int delay;
+  final Color color;
 
-  const _AnimatedFloatingIcon({required this.assetPath, required this.delay});
+  const _AnimatedFloatingIcon({
+    required this.assetPath,
+    required this.delay,
+    required this.color,
+  });
 
   @override
   State<_AnimatedFloatingIcon> createState() => _AnimatedFloatingIconState();
@@ -158,32 +177,42 @@ class _AnimatedFloatingIcon extends StatefulWidget {
 class _AnimatedFloatingIconState extends State<_AnimatedFloatingIcon>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
-  late Animation<double> _floatAnimation;
   late Animation<double> _scaleAnimation;
+  late Animation<double> _fadeAnimation;
 
   @override
   void initState() {
     super.initState();
     _controller = AnimationController(
-      duration: Duration(milliseconds: 2500),
+      duration: Duration(milliseconds: 400),
       vsync: this,
     );
 
-    _floatAnimation = Tween<double>(
-      begin: -8,
-      end: 8,
-    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
-
     _scaleAnimation = Tween<double>(
       begin: 1.0,
-      end: 1.08,
+      end: 1.15,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+
+    _fadeAnimation = Tween<double>(
+      begin: 1.0,
+      end: 0.85,
     ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
 
     Future.delayed(Duration(milliseconds: widget.delay), () {
-      if (mounted) {
-        _controller.repeat(reverse: true);
-      }
+      _startPeriodicAnimation();
     });
+  }
+
+  void _startPeriodicAnimation() async {
+    while (mounted) {
+      await Future.delayed(Duration(seconds: 2));
+      if (mounted) {
+        await _controller.forward();
+        if (mounted) {
+          await _controller.reverse();
+        }
+      }
+    }
   }
 
   @override
@@ -193,15 +222,14 @@ class _AnimatedFloatingIconState extends State<_AnimatedFloatingIcon>
   }
 
   @override
-  @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
       animation: _controller,
       builder: (context, child) {
-        return Transform.translate(
-          offset: Offset(0, _floatAnimation.value),
-          child: Transform.scale(
-            scale: _scaleAnimation.value,
+        return Transform.scale(
+          scale: _scaleAnimation.value,
+          child: Opacity(
+            opacity: _fadeAnimation.value,
             child: Container(
               width: 72,
               height: 72,
@@ -209,33 +237,23 @@ class _AnimatedFloatingIconState extends State<_AnimatedFloatingIcon>
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: ColorPalette.primary.withOpacity(
-                      (0.4 * _scaleAnimation.value).clamp(0.0, 1.0),
-                    ),
-                    blurRadius: 24 * _scaleAnimation.value,
+                    color: widget.color.withOpacity(0.05),
+                    blurRadius: 24,
                     spreadRadius: 2,
-                    offset: Offset(0, 12 * _scaleAnimation.value),
+                    offset: Offset(0, 8),
                   ),
                   BoxShadow(
-                    color: Color(0xFF6366f1).withOpacity(
-                      (0.2 * _scaleAnimation.value).clamp(0.0, 1.0),
-                    ),
-                    blurRadius: 32 * _scaleAnimation.value,
+                    color: widget.color.withOpacity(0.1),
+                    blurRadius: 16,
                     spreadRadius: 0,
-                    offset: Offset(0, 8 * _scaleAnimation.value),
+                    offset: Offset(0, 4),
                   ),
                 ],
               ),
-              child: Container(
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.white.withOpacity(0.05),
-                ),
-                child: Image.asset(
-                  widget.assetPath,
-                  fit: BoxFit.contain,
-                  height: 100,
-                ),
+              child: Image.asset(
+                widget.assetPath,
+                fit: BoxFit.contain,
+                height: 72,
               ),
             ),
           ),

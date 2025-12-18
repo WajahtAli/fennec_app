@@ -10,7 +10,6 @@ import 'package:fennac_app/widgets/custom_sized_box.dart';
 import 'package:fennac_app/widgets/custom_text.dart';
 import 'package:fennac_app/widgets/custom_text_field.dart';
 import 'package:fennac_app/widgets/movable_background.dart';
-import 'package:fennac_app/app/theme/app_colors.dart';
 import 'package:fennac_app/app/theme/text_styles.dart';
 import 'package:fennac_app/pages/auth/presentation/widgets/privacy_bottom_sheet.dart';
 import 'package:fennac_app/pages/auth/presentation/widgets/terms_bottom_sheet.dart';
@@ -117,7 +116,6 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                         ),
                         CustomSizedBox(height: 40),
 
-                        // First Name & Last Name
                         Row(
                           children: [
                             Expanded(
@@ -151,7 +149,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                           controller: _emailController,
                           validator: _authCubit.validateEmail,
                           keyboardType: TextInputType.emailAddress,
-                          hintText: 'johndoe.email.com',
+                          hintText: 'ali@gmail.com',
                           labelColor: Colors.white,
                           filled: false,
                         ),
@@ -161,16 +159,8 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            AppText(
-                              text: 'Phone Number',
-                              style: AppTextStyles.bodyLarge(context).copyWith(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            CustomSizedBox(height: 8),
                             PhoneNumberField(
-                              label: 'Country',
+                              label: 'Phone Number',
                               hintText: 'Enter Your Number',
 
                               onChanged: (country) {},
@@ -271,15 +261,14 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                         // Sign Up Button
                         CustomElevatedButton(
                           onTap: () {
-                            AutoRouter.of(
-                              context,
-                            ).replace(const VerifyPhoneNumberRoute());
-                            // if (_formKey.currentState!.validate()) {
-                            //   // Handle sign up
-                            //   AutoRouter.of(
-                            //     context,
-                            //   ).replace(const DashboardRoute());
-                            // }
+                            // AutoRouter.of(
+                            //   context,
+                            // ).replace(const VerifyPhoneNumberRoute());
+                            if (_formKey.currentState!.validate()) {
+                              AutoRouter.of(
+                                context,
+                              ).replace(const DashboardRoute());
+                            }
                           },
                           text: 'Sign Up',
                           width: double.infinity,

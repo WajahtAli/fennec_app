@@ -7,146 +7,189 @@ import 'package:fennac_app/widgets/custom_outlined_button.dart';
 import 'package:fennac_app/widgets/custom_text.dart';
 import 'package:fennac_app/widgets/movable_background.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fennac_app/generated/assets.gen.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:lottie/lottie.dart';
 
 @RoutePage()
-class DashboardScreen extends StatelessWidget {
+class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
+
+  @override
+  State<DashboardScreen> createState() => _DashboardScreenState();
+}
+
+class _DashboardScreenState extends State<DashboardScreen>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _fade;
+  late Animation<Offset> _slide;
+  late Animation<double> _scale;
+
+  void cacheImages(BuildContext context) {
+    precacheImage(AssetImage(Assets.images.boysGroup.path), context);
+    precacheImage(AssetImage(Assets.images.girlsGroup.path), context);
+    precacheImage(AssetImage(Assets.images.mobile.path), context);
+    precacheImage(AssetImage(Assets.icons.group.path), context);
+    precacheImage(AssetImage(Assets.icons.groupUsersIcon2.path), context);
+    precacheImage(AssetImage(Assets.icons.groupUsersIcon2.path), context);
+    precacheImage(AssetImage(Assets.icons.groupUsersIcon3.path), context);
+    precacheImage(AssetImage(Assets.icons.groupUsersIcon4.path), context);
+    precacheImage(AssetImage(Assets.icons.groupUsersIcon5.path), context);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Set system UI overlay style to match dark background
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.light,
+        systemNavigationBarColor: Color(0xFF0D0D0D),
+        systemNavigationBarIconBrightness: Brightness.light,
+      ),
+    );
+
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 900),
+    );
+
+    _fade = CurvedAnimation(parent: _controller, curve: Curves.easeOut);
+
+    _slide = Tween<Offset>(
+      begin: const Offset(0, 0.25),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic));
+
+    _scale = Tween<double>(
+      begin: 0.95,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutBack));
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _controller.forward();
+      cacheImages(context);
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  Widget _socialIcon(Widget icon) {
+    return Container(
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: ColorPalette.secondry,
+        boxShadow: [
+          BoxShadow(
+            color: ColorPalette.secondry.withOpacity(0.6),
+            spreadRadius: 2,
+            blurRadius: 8,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: IconButton(onPressed: () {}, icon: icon),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFF0D0D0D),
       body: MovableBackground(
-        child: Stack(
-          children: [
-            SafeArea(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SizedBox(
-                    height: 400,
-                    child: Stack(
-                      alignment: Alignment.center,
+        child: SafeArea(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(
+                height: 400,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Lottie.asset(
+                      Assets.animations.welcomeScreenAnimationNoShadow,
+                      repeat: true,
+                      fit: BoxFit.fill,
+                    ),
+                    SvgPicture.asset(
+                      Assets.icons.fennecLogoWithText.path,
+                      width: 120,
+                      height: 120,
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 40),
+              FadeTransition(
+                opacity: _fade,
+                child: SlideTransition(
+                  position: _slide,
+                  child: ScaleTransition(
+                    scale: _scale,
+                    child: Column(
                       children: [
-                        Lottie.asset(
-                          Assets.animations.welcomeScreenAnimationNoShadow,
-                          repeat: true,
-                          fit: BoxFit.fill,
+                        CustomElevatedButton(
+                          width: 0.9.sw,
+                          text: 'Create your Account',
+                          onTap: () {
+                            AutoRouter.of(
+                              context,
+                            ).push(const OnBoardingRoute1());
+                          },
                         ),
-                        SvgPicture.asset(
-                          Assets.icons.fennecLogoWithText.path,
-                          width: 120,
-                          height: 120,
+                        const SizedBox(height: 16),
+                        CustomOutlinedButton(
+                          width: 0.9.sw,
+                          onPressed: () {
+                            AutoRouter.of(context).push(const LoginRoute());
+                          },
+                          text: 'Login with Email',
+                        ),
+                        const SizedBox(height: 24),
+                        AppText(
+                          text: 'or continue with',
+                          style: AppTextStyles.bodyLarge(context).copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(height: 24),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            _socialIcon(
+                              Assets.icons.google.svg(width: 24, height: 24),
+                            ),
+                            const SizedBox(width: 16),
+                            _socialIcon(
+                              Assets.icons.facebook.svg(width: 24, height: 24),
+                            ),
+                            const SizedBox(width: 16),
+                            _socialIcon(
+                              Assets.icons.apple.svg(
+                                width: 24,
+                                height: 24,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
                   ),
-                  const SizedBox(height: 40),
-                  CustomElevatedButton(
-                    width: 0.9.sw,
-                    text: 'Create your Account',
-                    onTap: () {
-                      // AutoRouter.of(context).push(const CreateAccountRoute());
-                      AutoRouter.of(context).push(const OnBoardingRoute1());
-                    },
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  CustomOutlinedButton(
-                    width: 0.9.sw,
-                    onPressed: () {
-                      AutoRouter.of(context).push(const LoginRoute());
-                    },
-                    text: 'Login with Email',
-                  ),
-                  const SizedBox(height: 24),
-
-                  AppText(
-                    text: 'or continue with',
-                    style: AppTextStyles.bodyLarge(context).copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: ColorPalette.secondry,
-                          boxShadow: [
-                            BoxShadow(
-                              color: ColorPalette.secondry.withOpacity(0.6),
-                              spreadRadius: 2,
-                              blurRadius: 8,
-                              offset: const Offset(0, 3),
-                            ),
-                          ],
-                        ),
-                        child: IconButton(
-                          onPressed: () {},
-                          icon: Assets.icons.google.svg(width: 24, height: 24),
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Container(
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: ColorPalette.secondry,
-                          boxShadow: [
-                            BoxShadow(
-                              color: ColorPalette.secondry.withOpacity(0.6),
-                              spreadRadius: 2,
-                              blurRadius: 8,
-                              offset: const Offset(0, 3),
-                            ),
-                          ],
-                        ),
-                        child: IconButton(
-                          onPressed: () {},
-                          icon: Assets.icons.facebook.svg(
-                            width: 24,
-                            height: 24,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Container(
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: ColorPalette.secondry,
-                          boxShadow: [
-                            BoxShadow(
-                              color: ColorPalette.secondry.withOpacity(0.1),
-                              spreadRadius: 2,
-                              blurRadius: 8,
-                              offset: const Offset(0, 3),
-                            ),
-                          ],
-                        ),
-                        child: IconButton(
-                          onPressed: () {},
-                          icon: Assets.icons.apple.svg(
-                            width: 24,
-                            height: 24,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

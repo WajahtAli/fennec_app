@@ -132,6 +132,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                                         "We've sent a 6-digit code to you. Continue to reset your password.",
                                     buttonText: 'Continue',
                                     onButtonPressed: () {
+                                      AutoRouter.of(context).pop();
                                       AutoRouter.of(
                                         context,
                                       ).push(OtpVerificationRoute());

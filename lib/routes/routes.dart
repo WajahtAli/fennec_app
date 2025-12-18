@@ -4,26 +4,76 @@ part of 'routes_imports.dart';
 class AppRouter extends RootStackRouter {
   @override
   List<AutoRoute> get routes => [
-    AutoRoute(page: SplashRoute.page, initial: true),
+    CustomRoute(
+      page: SplashRoute.page,
+      initial: true,
+      transitionsBuilder: TransitionsBuilders.fadeIn,
+      barrierColor: Colors.transparent,
+      duration: const Duration(milliseconds: 300),
+    ),
 
-    AutoRoute(page: DashboardRoute.page),
-    AutoRoute(page: HomeRoute.page),
-    AutoRoute(page: LoginRoute.page),
-    AutoRoute(page: ResetPasswordRoute.page),
-    AutoRoute(page: OtpVerificationRoute.page),
-    AutoRoute(page: CreateAccountRoute.page),
+    CustomRoute(
+      page: DashboardRoute.page,
+      barrierColor: Colors.transparent,
+      transitionsBuilder: TransitionsBuilders.noTransition,
+    ),
+
+    CustomRoute(
+      page: HomeRoute.page,
+      transitionsBuilder: TransitionsBuilders.fadeIn,
+      barrierColor: Colors.transparent,
+      duration: const Duration(milliseconds: 300),
+    ),
+
+    CustomRoute(
+      page: LoginRoute.page,
+      transitionsBuilder: TransitionsBuilders.fadeIn,
+      barrierColor: Colors.transparent,
+      duration: const Duration(milliseconds: 300),
+    ),
+
+    CustomRoute(
+      page: ResetPasswordRoute.page,
+      transitionsBuilder: TransitionsBuilders.fadeIn,
+      barrierColor: Colors.transparent,
+      duration: const Duration(milliseconds: 300),
+    ),
+
+    CustomRoute(
+      page: OtpVerificationRoute.page,
+      transitionsBuilder: TransitionsBuilders.fadeIn,
+      barrierColor: Colors.transparent,
+      duration: const Duration(milliseconds: 300),
+    ),
+
+    CustomRoute(
+      page: CreateAccountRoute.page,
+      transitionsBuilder: TransitionsBuilders.slideBottom,
+
+      barrierColor: Colors.transparent,
+      duration: const Duration(milliseconds: 600),
+    ),
+
     CustomRoute(
       page: OnBoardingRoute.page,
       transitionsBuilder: TransitionsBuilders.fadeIn,
+      barrierColor: Colors.transparent,
+
       duration: const Duration(milliseconds: 600),
     ),
-    AutoRoute(page: VerifyPhoneNumberRoute.page),
-    AutoRoute(page: OnBoardingRoute1.page),
-  ];
 
-  @override
-  RouteType get defaultRouteType => RouteType.custom(
-    transitionsBuilder: TransitionsBuilders.slideBottom,
-    duration: const Duration(milliseconds: 600),
-  );
+    CustomRoute(
+      page: VerifyPhoneNumberRoute.page,
+      transitionsBuilder: TransitionsBuilders.fadeIn,
+      barrierColor: Colors.transparent,
+      duration: const Duration(milliseconds: 300),
+    ),
+
+    CustomRoute(
+      page: OnBoardingRoute1.page,
+      barrierColor: Colors.transparent,
+      transitionsBuilder: TransitionsBuilders.fadeIn,
+      duration: const Duration(milliseconds: 300),
+    ),
+  ];
 }

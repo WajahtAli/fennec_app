@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ui';
 import 'package:auto_route/auto_route.dart';
 import 'package:fennac_app/generated/assets.gen.dart';
@@ -32,13 +33,51 @@ class _VerifyPhoneNumberScreenState extends State<VerifyPhoneNumberScreen> {
   final ValueNotifier<String?> _errorMessageNotifier = ValueNotifier(null);
   final ValueNotifier<bool> _isBlurNotifier = ValueNotifier(false);
 
+  // Timer related
+  Timer? _timer;
+  final ValueNotifier<int> _remainingSecondsNotifier = ValueNotifier(
+    120,
+  ); // 2 minutes
+  bool _canResend = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _startTimer();
+  }
+
   @override
   void dispose() {
+    _timer?.cancel();
     _otpController.dispose();
     _isCodeResentNotifier.dispose();
     _errorMessageNotifier.dispose();
     _isBlurNotifier.dispose();
+    _remainingSecondsNotifier.dispose();
     super.dispose();
+  }
+
+  void _startTimer() {
+    _canResend = false;
+    _remainingSecondsNotifier.value = 120; // Reset to 2 minutes
+
+    _timer?.cancel();
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (_remainingSecondsNotifier.value > 0) {
+        _remainingSecondsNotifier.value--;
+      } else {
+        _timer?.cancel();
+        setState(() {
+          _canResend = true;
+        });
+      }
+    });
+  }
+
+  String _formatTime(int seconds) {
+    final minutes = seconds ~/ 60;
+    final secs = seconds % 60;
+    return '${minutes.toString().padLeft(2, '0')}:${secs.toString().padLeft(2, '0')}';
   }
 
   void _onVerify() async {
@@ -72,6 +111,9 @@ class _VerifyPhoneNumberScreenState extends State<VerifyPhoneNumberScreen> {
   }
 
   void _onResend() {
+    if (!_canResend) return;
+
+    _startTimer(); // Restart timer from 2 minutes
     _isCodeResentNotifier.value = true;
     _errorMessageNotifier.value = null;
     Future.delayed(const Duration(seconds: 3), () {
@@ -129,7 +171,7 @@ class _VerifyPhoneNumberScreenState extends State<VerifyPhoneNumberScreen> {
                       CustomSizedBox(height: 12),
                       AppText(
                         text:
-                            "We’ve sent you a 6-digit code, enter it below to verify your account.",
+                            "We've sent you a 6-digit code, enter it below to verify your account.",
                         style: AppTextStyles.bodyLarge(context).copyWith(
                           color: Colors.white,
                           fontWeight: FontWeight.w500,
@@ -181,45 +223,20 @@ class _VerifyPhoneNumberScreenState extends State<VerifyPhoneNumberScreen> {
                       ValueListenableBuilder<bool>(
                         valueListenable: _isCodeResentNotifier,
                         builder: (context, isCodeResent, child) {
-                          if (!isCodeResent) {
-                            return TileWidget(onTap: _onResend);
-                          }
-                          return Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 12,
-                            ),
-                            decoration: BoxDecoration(
-                              color: ColorPalette.greenDark,
-                              borderRadius: BorderRadius.circular(30),
-                            ),
-                            child: Row(
-                              children: [
-                                SvgPicture.asset(
-                                  Assets.icons.checkCircle.path,
-                                  height: 24,
-                                  width: 24,
-                                  colorFilter: ColorFilter.mode(
-                                    Colors.white,
-                                    BlendMode.srcIn,
-                                  ),
-                                ),
-                                const SizedBox(width: 12),
-                                Text(
-                                  'Code Sent Again',
-                                  style: AppTextStyles.bodyLarge(context)
-                                      .copyWith(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                ),
-                                Spacer(),
-                                GestureDetector(
-                                  onTap: () {
-                                    _isCodeResentNotifier.value = false;
-                                  },
-                                  child: SvgPicture.asset(
-                                    Assets.icons.cancel.path,
+                          if (isCodeResent) {
+                            return Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 12,
+                              ),
+                              decoration: BoxDecoration(
+                                color: ColorPalette.greenDark,
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                              child: Row(
+                                children: [
+                                  SvgPicture.asset(
+                                    Assets.icons.checkCircle.path,
                                     height: 24,
                                     width: 24,
                                     colorFilter: ColorFilter.mode(
@@ -227,9 +244,77 @@ class _VerifyPhoneNumberScreenState extends State<VerifyPhoneNumberScreen> {
                                       BlendMode.srcIn,
                                     ),
                                   ),
+                                  const SizedBox(width: 12),
+                                  Text(
+                                    'Code Sent Again',
+                                    style: AppTextStyles.bodyLarge(context)
+                                        .copyWith(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                  ),
+                                  Spacer(),
+                                  GestureDetector(
+                                    onTap: () {
+                                      _isCodeResentNotifier.value = false;
+                                    },
+                                    child: SvgPicture.asset(
+                                      Assets.icons.cancel.path,
+                                      height: 24,
+                                      width: 24,
+                                      colorFilter: ColorFilter.mode(
+                                        Colors.white,
+                                        BlendMode.srcIn,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }
+
+                          // Show timer or resend button
+                          return ValueListenableBuilder<int>(
+                            valueListenable: _remainingSecondsNotifier,
+                            builder: (context, remainingSeconds, child) {
+                              if (_canResend || remainingSeconds == 0) {
+                                return TileWidget(onTap: _onResend);
+                              }
+
+                              return Container(
+                                height: 50,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 12,
                                 ),
-                              ],
-                            ),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(8),
+                                  color: Colors.black26,
+                                ),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    AppText(
+                                      text: "Didn't get the code?",
+                                      style: AppTextStyles.bodyLarge(
+                                        context,
+                                      ).copyWith(color: Colors.white),
+                                    ),
+                                    AppText(
+                                      text: _formatTime(remainingSeconds),
+                                      style: AppTextStyles.bodyLarge(context)
+                                          .copyWith(
+                                            color: Colors.white.withOpacity(
+                                              0.7,
+                                            ),
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
                           );
                         },
                       ),

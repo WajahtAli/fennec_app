@@ -3,9 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:fennac_app/generated/assets.gen.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-class OnBoardingWidget1 extends StatelessWidget {
+class OnBoardingWidget1 extends StatefulWidget {
   const OnBoardingWidget1({super.key});
 
+  @override
+  State<OnBoardingWidget1> createState() => _OnBoardingWidget1State();
+}
+
+class _OnBoardingWidget1State extends State<OnBoardingWidget1> {
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -45,14 +50,14 @@ class OnBoardingWidget1 extends StatelessWidget {
                           child: _buildHeartIcon(),
                         ),
                         Positioned(
-                          bottom: 180,
-                          left: 30,
+                          bottom: 130,
+                          left: 60,
                           child: _buildHeartIcon(),
                         ),
                       ],
                     ),
                   ),
-                  const SizedBox(height: 60),
+                  const SizedBox(height: 40),
                   // Text content
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 40),

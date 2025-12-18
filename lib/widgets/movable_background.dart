@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:fennac_app/app/theme/app_colors.dart';
 import 'package:fennac_app/core/di_container.dart';
 import 'package:fennac_app/pages/splash/presentation/bloc/cubit/background_cubit.dart';
 import 'package:fennac_app/pages/splash/presentation/bloc/state/background_state.dart';
@@ -75,6 +76,8 @@ class _MovableBackgroundState extends State<MovableBackground>
           builder: (context) {
             final size = MediaQuery.of(context).size;
             return Scaffold(
+              backgroundColor: ColorPalette.black,
+
               body: MouseRegion(
                 onHover: (event) {
                   final dx = (event.position.dx / size.width).clamp(0.0, 1.0);

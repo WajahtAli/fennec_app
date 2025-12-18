@@ -16,75 +16,66 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen>
     with TickerProviderStateMixin {
-  late final AnimationController _logoController;
-  late final Animation<double> _logoScaleAnimation;
-  // ignore: unused_field
-  late final Animation<double> _logoFadeAnimation;
+  late final AnimationController _fadeController;
+  late final Animation<double> _fadeAnimation;
 
   @override
   void initState() {
     super.initState();
-    _initAnimations();
+
+    _fadeController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 600),
+    );
+
+    _fadeAnimation = CurvedAnimation(
+      parent: _fadeController,
+      curve: Curves.easeIn,
+    );
+
     _startFlow();
   }
 
-  void _initAnimations() {
-    _logoController = AnimationController(
-      duration: const Duration(milliseconds: 800),
-      vsync: this,
-    );
-
-    _logoScaleAnimation = Tween<double>(begin: 0.6, end: 1.0).animate(
-      CurvedAnimation(parent: _logoController, curve: Curves.easeOutBack),
-    );
-
-    _logoFadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(parent: _logoController, curve: Curves.easeIn));
-  }
-
   Future<void> _startFlow() async {
-    // Animate in
-    await _logoController.forward();
-
-    // Keep splash visible
-    await Future.delayed(const Duration(seconds: 3));
-
-    // Animate out
-    // await _logoController.reverse();
+    await _fadeController.forward();
+    await Future.delayed(const Duration(seconds: 2));
 
     if (!mounted) return;
-
     context.router.replace(const OnBoardingRoute());
-  }
-
-  @override
-  void dispose() {
-    _logoController.dispose();
-    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: MovableBackground(
-        child: SafeArea(
-          child: Center(
-            child: ScaleTransition(
-              scale: _logoScaleAnimation,
-              child: Hero(
-                tag: 'splash_logo',
-                child: Lottie.asset(
-                  Assets.animations.fennecLogoAnimation,
-                  repeat: false,
-                  fit: BoxFit.contain,
-                ),
+        child: Center(
+          child: FadeTransition(
+            opacity: _fadeAnimation,
+            child: Hero(
+              tag: 'splash_logo',
+              flightShuttleBuilder: _heroFlightBuilder,
+              child: Lottie.asset(
+                Assets.animations.fennecLogoAnimation,
+                repeat: false,
+                fit: BoxFit.contain,
               ),
             ),
           ),
         ),
       ),
+    );
+  }
+
+  Widget _heroFlightBuilder(
+    BuildContext context,
+    Animation<double> animation,
+    HeroFlightDirection direction,
+    BuildContext fromContext,
+    BuildContext toContext,
+  ) {
+    return ScaleTransition(
+      scale: CurvedAnimation(parent: animation, curve: Curves.easeOutExpo),
+      child: toContext.widget,
     );
   }
 }
